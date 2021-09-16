@@ -21,13 +21,38 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <br/>
 
+Code:
+
+```{r setup2, include=TRUE}
+require(tidytuesdayR)
+require(tidyverse)
+tuesdata <- tidytuesdayR::tt_load('2020-01-21')
+spotify_songs <- tuesdata$spotify_songs 
+```
+
+``` {r}
+spotify_songs %>% count(playlist_genre)
+
+```
+
+<br/><br/>
+
 2. What is average value of energy and acousticness in the latin genre in this dataset? <br/>
 
-|                 mean energy = 0.7083125
-|                 mean acousticness = 0.2109204  
+|                 mean energy = 0.708
+|                 mean acousticness = 0.211 
 
 
 <br/>
+
+Code:
+
+``` {r}
+genre <- group_by (spotify_songs, playlist_genre)
+summarise(genre, avg_energy = mean(energy), avg_acoustic = mean(acousticness))
+```
+
+<br/><br/>
 
 3. Calculate the average duration of song (in minutes) across all subgenres. Which subgenre has the longest song on average? <br/>
 
@@ -36,6 +61,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <br/>
 
+Code:
+
+``` {r}
+subgenre <- group_by(spotify_songs, playlist_subgenre)
+subgenre_durations <- summarize(subgenre, duration_ms = mean(duration_ms, na.rm = TRUE) )
+```
+
+<br/><br/>
+
 4. Make two boxplots side-by-side of the danceability of songs stratifying by whether a song has a fast or slow tempo. Define fast tempo as any song that has a tempo above its median value. On average, which songs are more danceable?
 
 
@@ -43,25 +77,32 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <br/><br/>
 
-``` {r moresetup, include = FALSE} 
-require(tidytuesdayR)
-require(tidyverse)
-tuesdata <- tidytuesdayR::tt_load('2020-01-21')
-spotify_songs <- tuesdata$spotify_songs 
-danceability <- spotify_songs %>% mutate(tempocat= case_when(tempo < 121.98 ~ "1", TRUE ~ "0"))
-require(ggplot2)
+``` {r} 
+danceability <- spotify_songs %>% mutate(tempocat= case_when(tempo > 121.98 ~ "high", TRUE ~ "low"))
 ```
 
-``` {r danceability_boxplot, eval = TRUE, echo = FALSE}
+``` {r danceability_boxplot, eval = TRUE, echo = TRUE}
+require(ggplot2)
 qplot(tempocat, danceability, data = danceability, geom="boxplot", fill=tempocat, main="Danceability by Tempo Category", xlab="Tempo", ylab="Danceability")
 ```       
 
+<br/>
 
+|       On average, lower tempo songs are more danceable than higher tempo songs.
 
+<br/><br/><br/>
 
+## Part 2: Convert nontidy data into tidy data
 
+1. Select only unique distinct rows from the dataset based on the track_name and track_artist columns.
 
+``` {r}
+unique <- distinct(spotify_songs, spotify_songs$track_name, spotify_songs$track_artist, .keep_all = FALSE)
+```
 
+<br/><br/>
+
+2. Add a new column called year_released listing just the year that the song was released.
 
 
 
