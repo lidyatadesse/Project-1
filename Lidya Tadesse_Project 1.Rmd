@@ -1,0 +1,56 @@
+---
+title: "Project 1"
+author: "Lidya Tadesse"
+date: "9/15/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Part 1: Explore the Data
+1. How many songs are in each genre? <br/>
+
+|                 edm = 6043 
+|                 latin = 5155 
+|                 pop = 5507 
+|                 r&b = 5431 
+|                 rap = 5746 
+|                 rock = 4951 
+
+<br/>
+
+2. What is average value of energy and acousticness in the latin genre in this dataset? <br/>
+
+|                 mean energy = 0.7083125
+|                 mean acousticness = 0.2109204  
+
+
+<br/>
+
+3. Calculate the average duration of song (in minutes) across all subgenres. Which subgenre has the longest song on average? <br/>
+
+
+|                 New Jack Swing is the subgenre with the longest songs. On average, they are 275128.6 ms in length.
+
+<br/>
+
+4. Make two boxplots side-by-side of the danceability of songs stratifying by whether a song has a fast or slow tempo. Define fast tempo as any song that has a tempo above its median value. On average, which songs are more danceable?
+
+
+|               Median tempo is 121.98. 
+|               
+
+
+
+
+
+
+
+
+
+
+
+
+
