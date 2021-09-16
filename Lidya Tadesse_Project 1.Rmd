@@ -40,7 +40,21 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 |               Median tempo is 121.98. 
-|               
+
+<br/><br/>
+
+``` {r moresetup, include = FALSE} 
+require(tidytuesdayR)
+require(tidyverse)
+tuesdata <- tidytuesdayR::tt_load('2020-01-21')
+spotify_songs <- tuesdata$spotify_songs 
+danceability <- spotify_songs %>% mutate(tempocat= case_when(tempo < 121.98 ~ "1", TRUE ~ "0"))
+require(ggplot2)
+```
+
+``` {r danceability_boxplot, eval = TRUE, echo = FALSE}
+qplot(tempocat, danceability, data = danceability, geom="boxplot", fill=tempocat, main="Danceability by Tempo Category", xlab="Tempo", ylab="Danceability")
+```       
 
 
 

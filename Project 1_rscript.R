@@ -19,4 +19,10 @@ has the longest song on average?"
 has a fast or slow tempo. Define fast tempo as any song that has a tempo above its median 
 value. On average, which songs are more danceable?"
   
-  summary(spotify_songs$danceability)
+  danceability <- spotify_songs %>% 
+    + mutate(tempocat= case_when(tempo > 121.98 ~ "high", TRUE ~ "low"))
+  
+  qplot(tempocat, danceability, data = danceability, geom="boxplot", fill=tempocat, 
+        main="Danceability by Tempo Category", xlab="Tempo", ylab="Danceability")
+  
+  
