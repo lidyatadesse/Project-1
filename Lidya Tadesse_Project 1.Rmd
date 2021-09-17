@@ -100,15 +100,88 @@ qplot(tempocat, danceability, data = danceability, geom="boxplot", fill=tempocat
 1. Select only unique distinct rows from the dataset based on the track_name and track_artist columns.
 
 ``` {r}
-unique <- distinct(spotify_songs, spotify_songs$track_name, spotify_songs$track_artist, .keep_all = FALSE)
+unique <- distinct(spotify_songs, track_name, track_artist, .keep_all = FALSE)
 ```
 
 <br/>
 
 2. Add a new column called year_released listing just the year that the song was released.
 
+``` {r}
+spotify_songs2 <- spotify_songs %>% separate(col="track_album_release_date", into=c("year", "month", "date"), sep="-")
+spotify_songs2 <- distinct(spotify_songs2, track_name, track_artist, year, .keep_all = FALSE)
+unique_year <- left_join(x = unique, y = spotify_songs2, by = c("track_name", "track_artist"))
+colnames(unique_year)[colnames(unique_year) == 'year'] <- 'year_released'
+```
 
+3. Keep only songs that were released in or after 1980.
 
+``` {r}
+post_1980 <- filter(unique_year, year_released >= 1980)
+```
 
+<br/>
 
+4. Add a new column with the duration of the song in minutes
 
+``` {r}
+
+duration <- spotify_songs %>% 
+  select(track_name, track_artist, duration_ms)
+duration <- distinct(duration, track_name, track_artist, duration_ms, .keep_all = FALSE)
+update_v4 <- left_join(x = post_1980, y = duration, by = c("track_name", "track_artist"))
+```
+<br/>
+
+5. For each year_released, calculate the mean of at least 6 of the audio features (e.g. danceability, energy, loudness, etc), or descriptors (e.g. tempo, duration in minutes, etc).
+
+``` {r}
+
+#Adding the audio feature variables
+
+#energy
+energy <- spotify_songs %>% 
+  select(track_name, track_artist, energy)
+energy <- distinct(energy, track_name, track_artist, energy, .keep_all = FALSE)
+update_v5 <- left_join(x = update_v4, y = energy, by = c("track_name", "track_artist"))
+
+#key
+key <- spotify_songs %>% 
+  select(track_name, track_artist, key)
+key <- distinct(key, track_name, track_artist, key, .keep_all = FALSE)
+update_v6 <- left_join(x = update_v5, y = key, by = c("track_name", "track_artist"))
+
+#acousticness
+acoustic <- spotify_songs %>% 
+  select(track_name, track_artist, acousticness)
+acoustic <- distinct(acoustic, track_name, track_artist, acousticness, .keep_all = FALSE)
+update_v7 <- left_join(x = update_v6, y = acoustic, by = c("track_name", "track_artist"))
+
+#liveness
+live <- spotify_songs %>% 
+  select(track_name, track_artist, liveness)
+live <- distinct(live, track_name, track_artist, liveness, .keep_all = FALSE)
+update_v8 <- left_join(x = update_v7, y = live, by = c("track_name", "track_artist"))
+
+#tempo
+tempo <- spotify_songs %>% 
+  select(track_name, track_artist, tempo)
+tempo <- distinct(tempo, track_name, track_artist, tempo, .keep_all = FALSE)
+update_v9 <- left_join(x = update_v8, y = tempo, by = c("track_name", "track_artist"))
+
+#speechiness
+speech <- spotify_songs %>% 
+  select(track_name, track_artist, speechiness)
+speech <- distinct(speech, track_name, track_artist, speechiness, .keep_all = FALSE)
+update_v10 <- left_join(x = update_v9, y = speech, by = c("track_name", "track_artist"))
+
+```
+<br/>
+``` {r}
+
+#Creating table
+
+group_year <- group_by(update_v10, year_released)
+summarise(group_year, avg_energy = mean(energy), avg_key = mean(key), avg_acoustic = mean(acousticness), avg_live = mean(liveness), avg_dur = mean(duration_ms), avg_tempo = mean(tempo), avg_speech = mean(speechiness))
+
+```
