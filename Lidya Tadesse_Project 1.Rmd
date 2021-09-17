@@ -83,6 +83,9 @@ danceability <- spotify_songs %>% mutate(tempocat= case_when(tempo > 121.98 ~ "h
 
 ``` {r danceability_boxplot, eval = TRUE, echo = TRUE}
 require(ggplot2)
+```
+
+```
 qplot(tempocat, danceability, data = danceability, geom="boxplot", fill=tempocat, main="Danceability by Tempo Category", xlab="Tempo", ylab="Danceability")
 ```       
 
@@ -100,7 +103,7 @@ qplot(tempocat, danceability, data = danceability, geom="boxplot", fill=tempocat
 unique <- distinct(spotify_songs, spotify_songs$track_name, spotify_songs$track_artist, .keep_all = FALSE)
 ```
 
-<br/><br/>
+<br/>
 
 2. Add a new column called year_released listing just the year that the song was released.
 
